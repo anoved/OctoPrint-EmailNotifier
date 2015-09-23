@@ -61,7 +61,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 				except Exception as e:
 					self._logger.exception("Snapshot error (sending email notification without image): %s" % (str(e)))
 				else:
-					content.append(filename)
+					content.append({filename: "snapshot.jpg"})
 		
 		try:
 			mailer = yagmail.SMTP(user=self._settings.get(['mail_username']), host=self._settings.get(['mail_server']))
