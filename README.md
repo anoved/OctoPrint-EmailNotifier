@@ -20,11 +20,7 @@ One manual configuration step is required. Your outgoing email account password 
 	>>> import yagmail
 	>>> yagmail.register("SMTP username", "SMTP password")
 
-For Gmail addresses, the SMTP username is your complete `username@gmail.com` address.
-
-## Limitations
-
-Not yet tested with non-Gmail SMTP servers. Some additional settings or keyring management may be required.
+For some accounts, your SMTP username is your complete "username@domain.com" address.
 
 ## Acknowledgements
 
