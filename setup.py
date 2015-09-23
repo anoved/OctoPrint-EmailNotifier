@@ -18,7 +18,7 @@ plugin_version = "0.1"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = "Sends notifications about finished print jobs via email"
+plugin_description = "Recieve email notifications when OctoPrint jobs are complete."
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
 plugin_author = "Jim DeVona"
