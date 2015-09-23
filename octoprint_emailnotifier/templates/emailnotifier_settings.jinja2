@@ -1,0 +1,46 @@
+<h3>{{ _('Email Notifier Configuration') }}</h3>
+
+<form class="form-horizontal">
+
+	<div class="control-group">
+		<div class="controls" data-toggle="tooltip" title="{{ _('Email notifications will only be sent if enabled.') }}">
+			<label class="checkbox">
+				<input type="checkbox" data-bind="checked: settings.plugins.emailnotifier.enabled" /> {{ _('Enabled') }}
+			</label>
+		</div>
+	</div>
+
+	<div class="control-group" title="{{ _('Print complete notifications will be sent to this email address.') }}">
+		<label class="control-label">{{ _('Recipient Address') }}</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" data-bind="value: settings.plugins.emailnotifier.recipient_address">
+		</div>
+	</div>
+	
+	<h4>{{ _('SMTP Settings') }}</h4>
+	
+	<div class="control-group" title="{{ _('SMTP server.') }}">
+		<label class="control-label">{{ _('Server') }}</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" data-bind="value: settings.plugins.emailnotifier.mail_server">
+		</div>	
+	</div>
+	
+	<div class="control-group" title="{{ _('SMTP username. An associated password must be found in the system keyring.') }}">
+		<label class="control-label">{{ _('Username') }}</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" data-bind="value: settings.plugins.emailnotifier.mail_username">
+		</div>
+	</div>
+	
+	<h4>{{ _('Message Content') }}</h4>
+	
+	<div class="control-group">
+		<div class="controls" data-toggle="tooltip" title="{{ _('If checked, an image from the webcam will be attached to the email.') }}">
+			<label class="checkbox">
+				<input type="checkbox" data-bind="checked: value.settings.plugins.emailnotifier.include_snapshot" /> {{ _('Include snapshot') }}
+			</label>
+		</div>
+	</div>	
+	
+</form>
