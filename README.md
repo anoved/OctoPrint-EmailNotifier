@@ -2,6 +2,8 @@
 
 Recieve email notifications when OctoPrint jobs are complete.
 
+![Settings tab and email screenshot](extras/emailnotifier.png)
+
 ## Installation
 
 Install via the OctoPrint [Plugin Manager](https://github.com/foosel/OctoPrint/wiki/Plugin:-Plugin-Manager) or manually using this [archive URL](https://github.com/anoved/OctoPrint-EmailNotifier/archive/master.zip):
@@ -10,17 +12,13 @@ Install via the OctoPrint [Plugin Manager](https://github.com/foosel/OctoPrint/w
 
 ## Configuration
 
-![Email Notifier settings tab](http://i.imgur.com/5okAwT5.png)
-
-(Consider using an [SMS gateway](https://en.wikipedia.org/wiki/SMS_gateway#Use_with_email_clients) to send notifications to a mobile phone.)
-
-One manual configuration step is required. Your outgoing email account password is not stored with OctoPrint's settings. It is retrieved from your system [keyring](https://pypi.python.org/pypi/keyring#what-is-python-keyring-lib). Once this plugin and its prerequisites are installed, you can add your password to the keyring using this bit of interactive Python: 
+One manual configuration step is required. Your outgoing email account password is not stored with OctoPrint's settings. It is retrieved from your system [keyring](https://pypi.python.org/pypi/keyring#what-is-python-keyring-lib). Store your password from a Python prompt on your OctoPrint system using [`yagmail.register`](https://github.com/kootenpv/yagmail#username-and-password): 
 
 	$ ~/oprint/bin/python
 	>>> import yagmail
 	>>> yagmail.register("SMTP username", "SMTP password")
 
-For some accounts, your SMTP username is your complete "username@domain.com" address.
+For some accounts, your SMTP username may be your complete `username@domain.com` address.
 
 ## Acknowledgements
 
