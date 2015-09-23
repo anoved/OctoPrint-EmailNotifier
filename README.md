@@ -10,7 +10,7 @@ Install via the OctoPrint [Plugin Manager](https://github.com/foosel/OctoPrint/w
 
 ## Configuration
 
-![Email Notifier settings tab](http://i.imgur.com/9sliuId.png)
+![Email Notifier settings tab](http://i.imgur.com/5okAwT5.png)
 
 (Consider using an [SMS gateway](https://en.wikipedia.org/wiki/SMS_gateway#Use_with_email_clients) to send notifications to a mobile phone.)
 
