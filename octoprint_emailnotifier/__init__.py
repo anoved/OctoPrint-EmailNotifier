@@ -14,11 +14,15 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		# matching password must be registered in system keyring
 		# to support customizable mail server, may need port too
 		return dict(
+			enabled=False,
 			recipient_address="",
 			mail_server="",
 			mail_username="",
 			include_snapshot=True,
-			enabled=False
+			message_format=dict(
+				title="Print job complete",
+				body="{filename} done printing after {elapsed_time} on {final_time}"
+			)
 		)
 	
 	def get_settings_version(self):
@@ -45,11 +49,12 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		
 		import datetime
 		import octoprint.util
-		elapsed = octoprint.util.get_formatted_timedelta(datetime.timedelta(seconds=payload["time"]))
+		elapsed_time = octoprint.util.get_formatted_timedelta(datetime.timedelta(seconds=payload["time"]))
+		final_time = str(datetime.datetime.now())
 		
-		message = "%s print complete in %s" % (filename, elapsed)
-		title = "Print Job Done"
-		
+		tags = {'filename': filename, 'elapsed_time': elapsed_time, 'final_time': final_time}
+		title = self._settings.get(["message_format", "title"]).format(**tags)
+		message = self._settings.get(["message_format", "body"]).format(**tags)
 		content = [message]
 		
 		if self._settings.get(['include_snapshot']):
