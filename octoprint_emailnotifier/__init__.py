@@ -29,7 +29,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 
 	def get_template_configs(self):
 		return [
-			dict(type="settings", name="Email Notifier", custom_bindings=False)
+			dict(type="settings", name="Email Notifier", custom_bindings=True)
 		]
 
 	#~~ EventPlugin
