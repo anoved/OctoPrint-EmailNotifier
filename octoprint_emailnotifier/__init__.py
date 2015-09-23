@@ -21,7 +21,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 			include_snapshot=True,
 			message_format=dict(
 				title="Print job complete",
-				body="{filename} done printing after {elapsed_time} on {final_time}"
+				body="{filename} done printing after {elapsed_time}" 
 			)
 		)
 	
@@ -50,9 +50,8 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		import datetime
 		import octoprint.util
 		elapsed_time = octoprint.util.get_formatted_timedelta(datetime.timedelta(seconds=payload["time"]))
-		final_time = str(datetime.datetime.now())
 		
-		tags = {'filename': filename, 'elapsed_time': elapsed_time, 'final_time': final_time}
+		tags = {'filename': filename, 'elapsed_time': elapsed_time}
 		title = self._settings.get(["message_format", "title"]).format(**tags)
 		message = self._settings.get(["message_format", "body"]).format(**tags)
 		content = [message]
