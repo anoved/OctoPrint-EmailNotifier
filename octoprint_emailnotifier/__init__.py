@@ -2,7 +2,6 @@
 from __future__ import absolute_import
 import os
 import octoprint.plugin
-from octoprint.events import Events	
 import yagmail
 
 class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
@@ -29,14 +28,14 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 
 	def get_template_configs(self):
 		return [
-			dict(type="settings", name="Email Notifier", custom_bindings=True)
+			dict(type="settings", name="Email Notifier", custom_bindings=False)
 		]
 
 	#~~ EventPlugin
 	
 	def on_event(self, event, payload):
 		
-		if event != Events.PRINT_DONE:
+		if event != "PrintDone":
 			return
 		
 		if not self._settings.get(['enabled']):
