@@ -89,9 +89,9 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 				repo="OctoPrint-EmailNotifier",
 				current=self._plugin_version,
 
-				# update method: pip w/ dependency links
+				# update method: pip
 				pip="https://github.com/anoved/OctoPrint-EmailNotifier/archive/{target_version}.zip",
-				dependency_links=True
+				dependency_links=False
 			)
 		)
 
