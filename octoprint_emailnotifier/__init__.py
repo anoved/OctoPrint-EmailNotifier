@@ -46,8 +46,30 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		)
 	
 	def get_settings_version(self):
-		return 1
-
+		return 2
+	
+	def on_settings_migrate(self, target, current):
+		if current is None or current == 1
+		
+			# repackage v1 event notification settings as a dict
+			v1 = {
+				"PrintDone": {
+					'enabled': self._settings.get(["enabled"]),
+					'snapshot': self._settings.get(["include_snapshot"]),
+					'title': self._settings.get(["message_format", "title"]),
+					'body': self._settings.get(["message_format", "body"])
+				}
+			}
+			
+			# now remove the original settings...
+			self._settings.set(["enabled"], None)
+			self._settings.set(["include_snapshot"], None)
+			self._settings.set(["message_format"], None)
+			
+			# ... and replace them w/the event notifications dict
+			self._settings.set(["notifications"], v1)
+			self._settings.save()
+			
 	#~~ TemplatePlugin
 
 	def get_template_configs(self):
