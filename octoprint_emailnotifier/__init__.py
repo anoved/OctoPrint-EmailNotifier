@@ -14,7 +14,6 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		# matching password must be registered in system keyring
 		# to support customizable mail server, may need port too
 		return dict(
-			enabled=False,
 			recipient_address="",
 			mail_server="",
 			mail_username="",
@@ -78,8 +77,8 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 			import octoprint.util
 			time = octoprint.util.get_formatted_timedelta(datetime.timedelta(seconds=payload["time"]))
 		
-		# Gererate notification message from template.
-		# (**locals() makes event and payload properties accessible)
+		# Generate notification message from template.
+		# (**locals() makes event payload properties accessible)
 		title = notification.get('title').format(**locals())
 		content = [notification.get('body').format(**locals())]
 
