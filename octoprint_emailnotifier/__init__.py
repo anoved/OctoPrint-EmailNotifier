@@ -49,7 +49,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		return 2
 	
 	def on_settings_migrate(self, target, current):
-		if current is None or current == 1
+		if current is None or current == 1:
 		
 			# repackage v1 event notification settings as a dict
 			v1 = {
