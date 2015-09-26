@@ -40,7 +40,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 				"MovieDone": dict(
 					enabled=True,
 					title="Timelapse rendered: {movie_basename}",
-					body="Timelapse of printing {gcode} saved as {movie}."
+					body="Timelapse of printing {gcode} saved as {movie}.",
 					snapshot=False
 				)
 			}
