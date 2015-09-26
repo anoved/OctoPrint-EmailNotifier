@@ -18,11 +18,32 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 			recipient_address="",
 			mail_server="",
 			mail_username="",
-			include_snapshot=True,
-			message_format=dict(
-				title="Print job complete",
-				body="{filename} done printing after {elapsed_time}" 
-			)
+			
+			# Notification title and body templates may include any
+			# event payload properties associated with the event.
+			# http://docs.octoprint.org/en/master/events/index.html#available-events
+			# Elapsed times are formatted as H:M:S instead of seconds.
+			
+			notifications={
+				"FileSelected": dict(
+					enabled=True,
+					title="Selected {filename}",
+					body="{file} selected for printing. {__now}",
+					snapshot=False
+				),
+				"PrintDone": dict(
+					enabled=True,
+					title="Print complete: {file}",
+					body="{file} done in {time}.",
+					snapshot=True
+				),
+				"MovieDone": dict(
+					enabled=True,
+					title="Timelapse rendered: {movie_basename}",
+					body="Timelapse of printing {gcode} saved as {movie}."
+					snapshot=False
+				)
+			}
 		)
 	
 	def get_settings_version(self):
@@ -39,34 +60,43 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 	
 	def on_event(self, event, payload):
 		
-		if event != "PrintDone":
+		# Is there a notification registered for this event?
+		notification = self._settings.get(['notifications']).get(event)
+		if notification is None:
 			return
 		
-		if not self._settings.get(['enabled']):
+		# Is this notification enabled?
+		if not notification.get('enabled', False):
 			return
 		
-		filename = os.path.basename(payload["file"])
+		# Consider integrating or re-implementing these standard event properties, which I don't *think* are issued to plugin handlers:
+		# https://github.com/foosel/OctoPrint/blob/1c6b0554c796f03ed539397daa4b13c44d05a99d/src/octoprint/events.py#L325
 		
-		import datetime
-		import octoprint.util
-		elapsed_time = octoprint.util.get_formatted_timedelta(datetime.timedelta(seconds=payload["time"]))
+		# Convert elapsed times from raw seconds to readable durations.
+		if 'time' in payload:
+			import datetime
+			import octoprint.util
+			time = octoprint.util.get_formatted_timedelta(datetime.timedelta(seconds=payload["time"]))
 		
-		tags = {'filename': filename, 'elapsed_time': elapsed_time}
-		title = self._settings.get(["message_format", "title"]).format(**tags)
-		message = self._settings.get(["message_format", "body"]).format(**tags)
-		content = [message]
-		
-		if self._settings.get(['include_snapshot']):
+		# Gererate notification message from template.
+		# (**locals() makes event and payload properties accessible)
+		title = notification.get('title').format(**locals())
+		content = [notification.get('body').format(**locals())]
+
+		# Should this notification include a webcam snapshot?
+		# If so, attempt to attach it to the message content.
+		if notification.get('snapshot', False):
 			snapshot_url = self._settings.globalGet(["webcam", "snapshot"])
 			if snapshot_url:
 				try:
 					import urllib
-					filename, headers = urllib.urlretrieve(snapshot_url)
+					snapfile, headers = urllib.urlretrieve(snapshot_url)
 				except Exception as e:
 					self._logger.exception("Snapshot error (sending email notification without image): %s" % (str(e)))
 				else:
-					content.append({filename: "snapshot.jpg"})
+					content.append({snapfile: "snapshot.jpg"})
 		
+		# Send and log.
 		try:
 			mailer = yagmail.SMTP(user=self._settings.get(['mail_username']), host=self._settings.get(['mail_server']))
 			mailer.send(to=self._settings.get(['recipient_address']), subject=title, contents=content, validate_email=False)

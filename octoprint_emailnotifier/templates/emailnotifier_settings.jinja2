@@ -36,29 +36,7 @@
 	</div>
 	
 	<h4>{{ _('Message Content') }}</h4>
-	
-	<p>{{ _('The email title and body templates may contain the tags <code>{filename}</code> and <code>{elapsed_time}</code>.') }}</p>
-	
-	<div class="control-group" title="{{ _('Subject of notification email.') }}">
-		<label class="control-label">{{ _('Title') }}</label>
-		<div class="controls">
-			<input type="text" class="input-block-level" data-bind="value: settings.plugins.emailnotifier.message_format.title">
-		</div>	
-	</div>
-	
-	<div class="control-group" title="{{ _('Content of notification email') }}">
-		<label class="control-label">{{ _('Body') }}</label>
-		<div class="controls">
-			<input type="text" class="input-block-level" data-bind="value: settings.plugins.emailnotifier.message_format.body">
-		</div>
-	</div>
-	
-	<div class="control-group">
-		<div class="controls" title="{{ _('If checked, an image from the webcam will be attached to the email.') }}">
-			<label class="checkbox">
-				<input type="checkbox" data-bind="checked: settings.plugins.emailnotifier.include_snapshot" /> {{ _('Attach snapshot') }}
-			</label>
-		</div>
-	</div>
+
+	<p>Please edit the <code>emailnotifier</code> section of your OctoPrint <code>config.yaml</code> file to configure selected notifications and messages templates.</p>	
 	
 </form>
