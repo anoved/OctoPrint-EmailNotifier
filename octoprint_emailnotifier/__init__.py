@@ -120,7 +120,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 			self._logger.exception("Email notification error: %s" % (str(e)))
 		else:
 			# report notification was sent
-			self._logger.info("Print notification emailed to %s" % (self._settings.get(['recipient_address'])))		
+			self._logger.info("%s notification sent to %s" % (event, self._settings.get(['recipient_address'])))		
 
 	def get_update_information(self):
 		return dict(
