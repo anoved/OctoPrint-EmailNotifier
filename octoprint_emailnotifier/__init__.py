@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import os
 import octoprint.plugin
 import yagmail
+import string
 
 class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
                           octoprint.plugin.SettingsPlugin,
@@ -92,9 +93,10 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		# Consider integrating these event subscription properties
 		# https://github.com/foosel/OctoPrint/blob/1c6b0554c796f03ed539397daa4b13c44d05a99d/src/octoprint/events.py#L325
 		
-		# Generate notification message from template.
-		title = notification.get('title').format(**payload)
-		content = [notification.get('body').format(**payload)]
+		# Generate notification message from templates.
+		f = ChillFormatter()
+		title = f.format(notification.get('title'), **payload)
+		content = [f.format(notification.get('body'), **payload)]
 
 		# Should this notification include a webcam snapshot?
 		# If so, attempt to attach it to the message content.
@@ -137,6 +139,14 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 				dependency_links=False
 			)
 		)
+
+# Hack to make .format() chill out about unknown keys. Just let 'em be as-is.
+class ChillFormatter(string.Formatter):
+	def get_value(self, key, args, kwds):
+		if isinstance(key, str):
+			return kwds.get(key, '{' + key + '}')
+		else:
+			Formatter.get_value(key, args, kwds)
 
 __plugin_name__ = "Email Notifier"
 
