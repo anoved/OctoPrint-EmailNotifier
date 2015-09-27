@@ -27,7 +27,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 				"FileSelected": dict(
 					enabled=True,
 					title="Selected {filename}",
-					body="{file} selected for printing. {__now}",
+					body="{file} selected for printing.",
 					snapshot=False
 				),
 				"PrintDone": dict(
@@ -82,20 +82,19 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		# Is this notification enabled?
 		if not notification.get('enabled', False):
 			return
-		
-		# Consider integrating or re-implementing these standard event properties, which I don't *think* are issued to plugin handlers:
-		# https://github.com/foosel/OctoPrint/blob/1c6b0554c796f03ed539397daa4b13c44d05a99d/src/octoprint/events.py#L325
-		
+			
 		# Convert elapsed times from raw seconds to readable durations.
 		if 'time' in payload:
 			import datetime
 			import octoprint.util
-			time = octoprint.util.get_formatted_timedelta(datetime.timedelta(seconds=payload["time"]))
+			payload["time"] = octoprint.util.get_formatted_timedelta(datetime.timedelta(seconds=payload["time"]))
+		
+		# Consider integrating these event subscription properties
+		# https://github.com/foosel/OctoPrint/blob/1c6b0554c796f03ed539397daa4b13c44d05a99d/src/octoprint/events.py#L325
 		
 		# Generate notification message from template.
-		# (**locals() makes event payload properties accessible)
-		title = notification.get('title').format(**locals())
-		content = [notification.get('body').format(**locals())]
+		title = notification.get('title').format(**payload)
+		content = [notification.get('body').format(**payload)]
 
 		# Should this notification include a webcam snapshot?
 		# If so, attempt to attach it to the message content.
