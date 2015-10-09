@@ -18,6 +18,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 			recipient_address="",
 			mail_server="",
 			mail_username="",
+    		mail_useralias="",
 			include_snapshot=True,
 			message_format=dict(
 				title="Print job complete",
@@ -68,7 +69,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 					content.append({filename: "snapshot.jpg"})
 		
 		try:
-			mailer = yagmail.SMTP(user=self._settings.get(['mail_username']), host=self._settings.get(['mail_server']))
+			mailer = yagmail.SMTP(user={self._settings.get(['mail_username']):self._settings.get(['mail_useralias'])}, host=self._settings.get(['mail_server']))
 			mailer.send(to=self._settings.get(['recipient_address']), subject=title, contents=content, validate_email=False)
 		except Exception as e:
 			# report problem sending email
