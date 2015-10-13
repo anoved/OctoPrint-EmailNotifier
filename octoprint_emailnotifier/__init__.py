@@ -18,7 +18,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 			recipient_address="",
 			mail_server="",
 			mail_username="",
-    		mail_useralias="",
+			mail_useralias="",
 			include_snapshot=True,
 			message_format=dict(
 				title="Print job complete",
