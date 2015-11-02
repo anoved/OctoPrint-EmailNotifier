@@ -12,13 +12,15 @@ Install via the OctoPrint [Plugin Manager](https://github.com/foosel/OctoPrint/w
 
 ## Configuration
 
-One manual configuration step is required. Your outgoing email account password is not stored with OctoPrint's settings. It is retrieved from your system [keyring](https://pypi.python.org/pypi/keyring#what-is-python-keyring-lib). Store your password from a Python prompt on your OctoPrint system using [`yagmail.register`](https://github.com/kootenpv/yagmail#username-and-password): 
+Your outgoing email account password is not stored with OctoPrint's settings. It is retrieved from your system [keyring](https://pypi.python.org/pypi/keyring#what-is-python-keyring-lib). Store your password from a Python prompt on your OctoPrint system using [`yagmail.register`](https://github.com/kootenpv/yagmail#username-and-password): 
 
 	$ ~/oprint/bin/python
 	>>> import yagmail
 	>>> yagmail.register("SMTP username", "SMTP password")
 
 For some accounts, your SMTP username may be your complete `username@domain.com` address.
+
+To use yagmail (and thus OctoPrint-EmailNotifier) with Gmail, you may need to [allow less secure apps to access your account](https://support.google.com/accounts/answer/6010255?hl=en).
 
 ## Acknowledgements
 
