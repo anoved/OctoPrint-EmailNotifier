@@ -39,7 +39,6 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 	#~~ EventPlugin
 	
 	def on_event(self, event, payload):
-		
 		if event != "PrintDone":
 			return
 		
@@ -70,7 +69,8 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		
 		try:
 			mailer = yagmail.SMTP(user={self._settings.get(['mail_username']):self._settings.get(['mail_useralias'])}, host=self._settings.get(['mail_server']))
-			mailer.send(to=self._settings.get(['recipient_address']), subject=title, contents=content, validate_email=False)
+			emails = [email.strip() for email in self._settings.get(['recipient_address']).split(',')]
+			mailer.send(to=emails, subject=title, contents=content, validate_email=False)
 		except Exception as e:
 			# report problem sending email
 			self._logger.exception("Email notification error: %s" % (str(e)))
