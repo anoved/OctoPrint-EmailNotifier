@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import os
 import octoprint.plugin
 import yagmail
+import tempfile
 
 class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
                           octoprint.plugin.SettingsPlugin,
@@ -61,11 +62,11 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 			if snapshot_url:
 				try:
 					import urllib
-					filename, headers = urllib.urlretrieve(snapshot_url)
+					filename, headers = urllib.urlretrieve(snapshot_url, tempfile.gettempdir()+"/snapshot.jpg")
 				except Exception as e:
 					self._logger.exception("Snapshot error (sending email notification without image): %s" % (str(e)))
 				else:
-					content.append({filename: "snapshot.jpg"})
+					content.append(yagmail.inline(filename))
 		
 		try:
 			mailer = yagmail.SMTP(user={self._settings.get(['mail_username']):self._settings.get(['mail_useralias'])}, host=self._settings.get(['mail_server']))
