@@ -3,11 +3,21 @@ from __future__ import absolute_import
 import os
 import octoprint.plugin
 import yagmail
+import flask
 
 class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
                           octoprint.plugin.SettingsPlugin,
-                          octoprint.plugin.TemplatePlugin):
-	
+                          octoprint.plugin.TemplatePlugin,
+                          octoprint.plugin.AssetPlugin,
+                          octoprint.plugin.SimpleApiPlugin):
+
+	#~~ AssetPlugin
+	def get_assets(self):
+		return dict(
+			js=["js/emailnotifier.js"]
+		)
+
+
 	#~~ SettingsPlugin
 
 	def get_settings_defaults(self):
@@ -33,7 +43,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 
 	def get_template_configs(self):
 		return [
-			dict(type="settings", name="Email Notifier", custom_bindings=False)
+			dict(type="settings", name="Email Notifier", custom_bindings=True)
 		]
 
 	#~~ EventPlugin
@@ -52,31 +62,20 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		elapsed_time = octoprint.util.get_formatted_timedelta(datetime.timedelta(seconds=payload["time"]))
 		
 		tags = {'filename': filename, 'elapsed_time': elapsed_time}
-		title = self._settings.get(["message_format", "title"]).format(**tags)
+		subject = self._settings.get(["message_format", "title"]).format(**tags)
 		message = self._settings.get(["message_format", "body"]).format(**tags)
-		content = [message]
-		
-		if self._settings.get(['include_snapshot']):
-			snapshot_url = self._settings.globalGet(["webcam", "snapshot"])
-			if snapshot_url:
-				try:
-					import urllib
-					filename, headers = urllib.urlretrieve(snapshot_url)
-				except Exception as e:
-					self._logger.exception("Snapshot error (sending email notification without image): %s" % (str(e)))
-				else:
-					content.append({filename: "snapshot.jpg"})
-		
+		body = [message]
+		snapshot = self._settings.globalGet(["webcam", "snapshot"])
+
 		try:
-			mailer = yagmail.SMTP(user={self._settings.get(['mail_username']):self._settings.get(['mail_useralias'])}, host=self._settings.get(['mail_server']))
-			emails = [email.strip() for email in self._settings.get(['recipient_address']).split(',')]
-			mailer.send(to=emails, subject=title, contents=content, validate_email=False)
+			self.send_notification(subject, body, snapshot)
 		except Exception as e:
-			# report problem sending email
+			# If the email wasn't sent, report problems appropriately.
 			self._logger.exception("Email notification error: %s" % (str(e)))
 		else:
-			# report notification was sent
-			self._logger.info("Print notification emailed to %s" % (self._settings.get(['recipient_address'])))		
+			# If the mail was sent, report the success.
+			self._logger.info("Print notification emailed to %s" % (self._settings.get(['recipient_address'])))
+
 
 	def get_update_information(self):
 		return dict(
@@ -95,6 +94,57 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 				dependency_links=False
 			)
 		)
+
+	#~~ SimpleApiPlugin
+
+	def get_api_commands(self):
+		return dict(
+			testmail=[]
+		)
+
+	def on_api_command(self, command, data):
+		if command == "testmail":
+
+			subject = "OctoPrint Email Notifier Test"
+			body = ["If you received this email, your email notification configuration in OctoPrint is working as expected."]
+			snapshot = bool(data["snapshot"])
+
+			try:
+				self.send_notification(subject, body, snapshot)
+			except Exception as e:
+				self._logger.exception("Email notification error: %s" % (str(e)))
+				return flask.jsonify(success=False, msg=str(e))
+
+			# If we got here, everything is good.
+			self._logger.info("Test notification emailed to %s" % (self._settings.get(['recipient_address'])))
+			return flask.jsonify(success=True)
+
+		# If it's not testmail, then we don't know what it is.
+		else:
+			return flask.make_response("Unknown command", 400)
+
+
+	# Helper function to reduce code duplication.
+	# If snapshot == True, a webcam snapshot will be appended to body before sending.
+	def send_notification(self, subject="OctoPrint notification", body=[""], snapshot=True):
+
+		# If a snapshot is requested, let's grab it now.
+		if snapshot:
+			snapshot_url = self._settings.globalGet(["webcam", "snapshot"])
+			if snapshot_url:
+				try:
+					import urllib
+					filename, headers = urllib.urlretrieve(snapshot_url)
+					body.append({filename: filename})
+				except Exception as e:
+					self._logger.exception("Snapshot error (sending email notification without image): %s" % (str(e)))
+
+		# Exceptions thrown by any of the following lines are intentionally not
+		# caught. The callers need to be able to handle them in different ways.
+		mailer = yagmail.SMTP(user={self._settings.get(['mail_username']):self._settings.get(['mail_useralias'])}, host=self._settings.get(['mail_server']))
+		emails = [email.strip() for email in self._settings.get(['recipient_address']).split(',')]
+		mailer.send(to=emails, subject=subject, contents=body, validate_email=False)
+
 
 __plugin_name__ = "Email Notifier"
 
