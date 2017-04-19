@@ -4,6 +4,7 @@ import os
 import octoprint.plugin
 import yagmail
 import flask
+import tempfile
 
 class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
                           octoprint.plugin.SettingsPlugin,
@@ -65,10 +66,9 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		subject = self._settings.get(["message_format", "title"]).format(**tags)
 		message = self._settings.get(["message_format", "body"]).format(**tags)
 		body = [message]
-		snapshot = self._settings.globalGet(["webcam", "snapshot"])
-
+		
 		try:
-			self.send_notification(subject, body, snapshot)
+			self.send_notification(subject, body, self._settings.get(['include_snapshot']))
 		except Exception as e:
 			# If the email wasn't sent, report problems appropriately.
 			self._logger.exception("Email notification error: %s" % (str(e)))
@@ -134,10 +134,11 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 			if snapshot_url:
 				try:
 					import urllib
-					filename, headers = urllib.urlretrieve(snapshot_url)
-					body.append({filename: filename})
+					filename, headers = urllib.urlretrieve(snapshot_url, tempfile.gettempdir()+"/snapshot.jpg")
 				except Exception as e:
 					self._logger.exception("Snapshot error (sending email notification without image): %s" % (str(e)))
+				else:
+					body.append(yagmail.inline(filename))
 
 		# Exceptions thrown by any of the following lines are intentionally not
 		# caught. The callers need to be able to handle them in different ways.
