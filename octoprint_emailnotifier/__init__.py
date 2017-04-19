@@ -147,7 +147,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 
 		# If a snapshot is requested, let's grab it now.
 		if snapshot:
-			snapshot_url = self._settings.globalGet(["webcam", "snapshot"])
+			snapshot_url = self._settings.global_get(["webcam", "snapshot"])
 			if snapshot_url:
 				try:
 					import urllib
