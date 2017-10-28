@@ -26,9 +26,9 @@ $(function() {
 
             var recipients = self.settings.plugins.emailnotifier.recipient_address();
             var smtp = self.settings.plugins.emailnotifier.mail_server();
-            var smtp_port = self.settings.plugins.emailnotifier.mail_server_port();
-            var smtp_tls = self.settings.plugins.emailnotifier.mail_server_tls();
-            var smtp_ssl = self.settings.plugins.emailnotifier.mail_server_ssl();
+            var smtp_port = self.settings.plugins.emailnotifier.mail_port();
+            var smtp_tls = self.settings.plugins.emailnotifier.mail_tls();
+            var smtp_ssl = self.settings.plugins.emailnotifier.mail_ssl();
             var user = self.settings.plugins.emailnotifier.mail_username();
             var alias = self.settings.plugins.emailnotifier.mail_useralias();
             var snapshot = self.settings.plugins.emailnotifier.include_snapshot();
