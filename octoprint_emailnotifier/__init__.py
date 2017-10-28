@@ -6,7 +6,6 @@ import yagmail
 import flask
 import tempfile
 
-from email.utils import formatdate
 from flask.ext.login import current_user
 
 class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
