@@ -27,7 +27,20 @@
 			<input type="text" class="input-block-level" data-bind="value: settings.plugins.emailnotifier.mail_server">
 		</div>	
 	</div>
-	
+
+	<div class="control-group" title="{{ _('SMTP server port.') }}">
+		<label class="control-label">{{ _('Serverport') }}</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" data-bind="value: settings.plugins.emailnotifier.mail_server_port">
+			<label class="checkbox">
+				<input type="checkbox" data-bind="checked: settings.plugins.emailnotifier.mail_server_tls" /> {{ _('Use TLS') }}
+			</label>
+			<label class="checkbox">
+				<input type="checkbox" data-bind="checked: settings.plugins.emailnotifier.mail_server_ssl" /> {{ _('Use SSL') }}
+			</label>
+		</div>	
+	</div>
+
 	<div class="control-group" title="{{ _('SMTP username. An associated password must be found in the system keyring.') }}">
 		<label class="control-label">{{ _('Username') }}</label>
 		<div class="controls">

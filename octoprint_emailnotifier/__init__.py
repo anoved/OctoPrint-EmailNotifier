@@ -30,6 +30,8 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 			enabled=False,
 			recipient_address="",
 			mail_server="",
+			mail_tls=False,
+			mail_ssl=False,
 			mail_username="",
 			mail_useralias="",
 			include_snapshot=True,
@@ -46,7 +48,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		data = octoprint.plugin.SettingsPlugin.on_settings_load(self)
 
 		# only return our restricted settings to admin users - this is only needed for OctoPrint <= 1.2.16
-		restricted = ("mail_server", "mail_username", "recipient_address", "mail_useralias")
+		restricted = ("mail_server", "mail_port", "mail_tls", "mail_ssl","mail_username", "recipient_address", "mail_useralias")
 		for r in restricted:
 			if r in data and (current_user is None or current_user.is_anonymous() or not current_user.is_admin()):
 				data[r] = None
@@ -55,7 +57,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 
 	def get_settings_restricted_paths(self):
 		# only used in OctoPrint versions > 1.2.16
-		return dict(admin=[["mail_server"], ["mail_username"], ["recipient_address"], ["mail_useralias"]])
+		return dict(admin=[["mail_server"], ["mail_port"], ["mail_tls"], ["mail_ssl"], ["mail_username"], ["recipient_address"], ["mail_useralias"]])
 
 	#~~ TemplatePlugin
 
@@ -159,9 +161,9 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 
 		# Exceptions thrown by any of the following lines are intentionally not
 		# caught. The callers need to be able to handle them in different ways.
-		mailer = yagmail.SMTP(user={self._settings.get(['mail_username']):self._settings.get(['mail_useralias'])}, host=self._settings.get(['mail_server']))
+		mailer = yagmail.SMTP(user={self._settings.get(['mail_username']):self._settings.get(['mail_useralias'])}, host=self._settings.get(['mail_server']),port=self._settings.get(['mail_server_port']), smtp_starttls=self._settings.get(['mail_server_tls']), smtp_ssl=self._settings.get(['mail_server_ssl']))
 		emails = [email.strip() for email in self._settings.get(['recipient_address']).split(',')]
-		mailer.send(to=emails, subject=subject, contents=body, validate_email=False)
+		mailer.send(to=emails, subject=subject, contents=body)
 
 
 __plugin_name__ = "Email Notifier"
