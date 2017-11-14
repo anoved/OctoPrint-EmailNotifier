@@ -5,6 +5,7 @@ import octoprint.plugin
 import yagmail
 import flask
 import tempfile
+from email.utils import formatdate
 
 from flask.ext.login import current_user
 
@@ -161,8 +162,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		# caught. The callers need to be able to handle them in different ways.
 		mailer = yagmail.SMTP(user={self._settings.get(['mail_username']):self._settings.get(['mail_useralias'])}, host=self._settings.get(['mail_server']))
 		emails = [email.strip() for email in self._settings.get(['recipient_address']).split(',')]
-		mailer.send(to=emails, subject=subject, contents=body)
-
+		mailer.send(to=emails, subject=subject, contents=body, headers={"Date": formatdate()})
 
 __plugin_name__ = "Email Notifier"
 
