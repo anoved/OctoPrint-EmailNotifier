@@ -164,7 +164,6 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		emails = [email.strip() for email in self._settings.get(['recipient_address']).split(',')]
 		mailer.send(to=emails, subject=subject, contents=body, headers={"Date": formatdate()})
 
-
 __plugin_name__ = "Email Notifier"
 
 def __plugin_load__():
