@@ -161,7 +161,7 @@ class EmailNotifierPlugin(octoprint.plugin.EventHandlerPlugin,
 		# caught. The callers need to be able to handle them in different ways.
 		mailer = yagmail.SMTP(user={self._settings.get(['mail_username']):self._settings.get(['mail_useralias'])}, host=self._settings.get(['mail_server']))
 		emails = [email.strip() for email in self._settings.get(['recipient_address']).split(',')]
-		mailer.send(to=emails, subject=subject, contents=body, validate_email=False)
+		mailer.send(to=emails, subject=subject, contents=body)
 
 
 __plugin_name__ = "Email Notifier"
